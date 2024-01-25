@@ -1,35 +1,21 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-
 public class CityListProgram {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        
         System.out.print("Enter the number of cities (n): ");
-        int n = scanner.nextInt();
-
-       
+        int n = scanner.nextInt(); 
         ArrayList<String> cityList = new ArrayList<>();
-
-       
         for (int i = 0; i < n; i++) {
             System.out.print("Enter city name #" + (i + 1) + ": ");
             String cityName = scanner.next();
             cityList.add(cityName);
         }
-
-    
         System.out.println("Cities in the ArrayList:");
         for (String city : cityList) {
             System.out.println(city);
         }
-
-       
         cityList.clear();
-
-       
         System.out.println("Cities in the ArrayList after removal:");
         if (cityList.isEmpty()) {
             System.out.println("ArrayList is empty.");
@@ -38,7 +24,6 @@ public class CityListProgram {
                 System.out.println(city);
             }
         }
-
         scanner.close();
     }
 }
