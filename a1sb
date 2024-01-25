@@ -1,0 +1,91 @@
+//b1
+import java.util.Scanner;
+import java.util.TreeSet;
+public class SortedUniqueIntegersProgram {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of integers (n): ");
+        int n = scanner.nextInt();
+        TreeSet<Integer> uniqueIntegersSet = new TreeSet<>();
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter integer #" + (i + 1) + ": ");
+            int num = scanner.nextInt();
+            uniqueIntegersSet.add(num);
+        }
+        System.out.println("Sorted Unique Integers:");
+        for (int num : uniqueIntegersSet) {
+            System.out.println(num);
+        }
+        scanner.close();
+    }
+}
+//b2
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+public class SortHashMapByKeyProgram {
+    public static void main(String[] args) {
+        HashMap<Integer, String> detailsMap = new HashMap<>();
+        detailsMap.put(3, "John");
+        detailsMap.put(1, "Alice");
+        detailsMap.put(4, "Bob");
+        detailsMap.put(2, "Jane");
+        System.out.println("Details before sorting:");
+        displayMap(detailsMap);
+        TreeMap<Integer, String> sortedDetailsMap = new TreeMap<>(detailsMap);
+        System.out.println("\nDetails after sorting by keys:");
+        displayMap(sortedDetailsMap);
+    }
+    private static void displayMap(Map<Integer, String> map) {
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+        }
+    }
+}
+//b3
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class NamePhoneLookupProgram {
+    public static void main(String[] args) {
+        Map<String, String> phoneBook = new HashMap<>();
+        loadPhoneBookData("phonebook.txt", phoneBook);
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter a name or phone number: ");
+        String userInput = scanner.nextLine();
+        String result = performLookup(userInput, phoneBook);
+        System.out.println(result);
+        scanner.close();
+    }
+    private static void loadPhoneBookData(String fileName, Map<String, String> phoneBook) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\t");
+                if (fields.length == 2) {
+                    String name = fields[0];
+                    String phoneNumber = fields[1];
+                    phoneBook.put(name, phoneNumber);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private static String performLookup(String userInput, Map<String, String> phoneBook) {
+        if (phoneBook.containsKey(userInput)) {
+            return "Phone number for " + userInput + ": " + phoneBook.get(userInput);
+        } else if (phoneBook.containsValue(userInput)) {
+            for (Map.Entry<String, String> entry : phoneBook.entrySet()) {
+                if (entry.getValue().equals(userInput)) {
+                    return "Name for " + userInput + ": " + entry.getKey();
+                }
+            }
+        }
+        return "Entry not found for: " + userInput;
+    }
+}
