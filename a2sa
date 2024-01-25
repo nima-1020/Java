@@ -1,0 +1,145 @@
+//a1
+class PrintThread extends Thread {
+    private String text;
+    private int repetitions;
+
+    public PrintThread(String text, int repetitions) {
+        this.text = text;
+        this.repetitions = repetitions;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < repetitions; i++) {
+            System.out.println(text);
+        }
+    }
+}
+
+public class MultiThreadPrintProgram {
+
+    public static void main(String[] args) {
+        // Create three threads with different text and repetitions
+        PrintThread thread1 = new PrintThread("COVID19", 10);
+        PrintThread thread2 = new PrintThread("LOCKDOWN2020", 20);
+        PrintThread thread3 = new PrintThread("VACCINATED2021", 30);
+
+        // Start the threads
+        thread1.start();
+        thread2.start();
+        thread3.start();
+    }
+}
+//a2
+class CountingThread extends Thread {
+    public CountingThread(String name) {
+        super(name);
+    }
+
+    @Override
+    public void run() {
+        for (int i = 100; i >= 1; i--) {
+            try {
+                // Sleep for 6 seconds
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // Change the name of the thread during each iteration
+            String newName = "Thread-" + i;
+            this.setName(newName);
+
+            System.out.println(Thread.currentThread().getName() + ": " + i);
+        }
+    }
+}
+
+public class SleepAndNameChangeProgram {
+
+    public static void main(String[] args) {
+        // Create an instance of the CountingThread
+        CountingThread countingThread = new CountingThread("CountingThread");
+
+        // Start the thread
+        countingThread.start();
+    }
+}
+//a3
+import java.util.LinkedList;
+class SharedBuffer {
+    private LinkedList<Integer> buffer = new LinkedList<>();
+    private int capacity;
+    public SharedBuffer(int capacity) {
+        this.capacity = capacity;
+    }
+    public synchronized void produce(int value) {
+        while (buffer.size() == capacity) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        buffer.add(value);
+        System.out.println("Produced: " + value);
+        notify(); // Notify the consumer that a value is produced
+    }
+    public synchronized int consume() {
+        while (buffer.isEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        int consumedValue = buffer.remove();
+        System.out.println("Consumed: " + consumedValue);
+        notify(); // Notify the producer that a value is consumed
+        return consumedValue;
+    }
+}
+class Producer extends Thread {
+    private SharedBuffer buffer;
+
+    public Producer(SharedBuffer buffer) {
+        this.buffer = buffer;
+    }
+    @Override
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            buffer.produce(i);
+            try {
+                Thread.sleep(1000); // Simulate some time to produce the next value
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+class Consumer extends Thread {
+    private SharedBuffer buffer;
+    public Consumer(SharedBuffer buffer) {
+        this.buffer = buffer;
+    }
+    @Override
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            buffer.consume();
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+public class ProducerConsumerProgram {
+  public static void main(String[] args) {
+        SharedBuffer sharedBuffer = new SharedBuffer(1);
+        Producer producer = new Producer(sharedBuffer);
+        Consumer consumer = new Consumer(sharedBuffer);
+        producer.start();
+        consumer.start();
+    }
+}
