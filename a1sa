@@ -27,3 +27,24 @@ public class CityListProgram {
         scanner.close();
     }
 }
+//a2
+import java.util.LinkedList;
+import java.util.Scanner;
+public class FriendsListProgram {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of friends (n): ");
+        int n = scanner.nextInt();
+        LinkedList<String> friendsList = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter friend name #" + (i + 1) + ": ");
+            String friendName = scanner.next();
+            friendsList.add(friendName);
+        }
+        System.out.println("Friends in the LinkedList:");
+        for (String friend : friendsList) {
+            System.out.println(friend);
+        }
+        scanner.close();
+    }
+}
