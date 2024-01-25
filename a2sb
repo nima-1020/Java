@@ -1,0 +1,185 @@
+//b1
+import java.util.Random;
+
+class SumThread extends Thread {
+    private int[] array;
+    private int startIndex;
+    private int endIndex;
+    private long partialSum;
+    public SumThread(int[] array, int startIndex, int endIndex) {
+        this.array = array;
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
+    }
+    public long getPartialSum() {
+        return partialSum;
+    }
+    @Override
+    public void run() {
+        for (int i = startIndex; i < endIndex; i++) {
+            partialSum += array[i];
+        }
+    }
+}
+public class SumAverageMultiThreadProgram {
+    public static void main(String[] args) {
+        int[] array = generateRandomArray(1000);
+        int threadCount = 10;
+        SumThread[] threads = new SumThread[threadCount];
+        int chunkSize = array.length / threadCount;
+        int startIndex = 0;
+        int endIndex = chunkSize;
+        for (int i = 0; i < threadCount; i++) {
+            threads[i] = new SumThread(array, startIndex, endIndex);
+            threads[i].start();
+
+            startIndex = endIndex;
+            endIndex += chunkSize;
+        }
+        try {
+            for (SumThread thread : threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long totalSum = 0;
+        for (SumThread thread : threads) {
+            totalSum += thread.getPartialSum();
+        }
+        double average = (double) totalSum / array.length;
+        System.out.println("Total Sum: " + totalSum);
+        System.out.println("Average: " + average);
+    }
+    private static int[] generateRandomArray(int size) {
+        Random random = new Random();
+        int[] array = new int[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = random.nextInt(100); 
+        }
+        return array;
+    }
+}
+//b2
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+class SearchThread extends Thread {
+    private String searchString;
+    private File file;
+    public SearchThread(String searchString, File file) {
+        this.searchString = searchString;
+        this.file = file;
+    }
+    @Override
+    public void run() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            int lineNumber = 1;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(searchString)) {
+                    System.out.println("Found in file: " + file.getName() + ", Line: " + lineNumber);
+                }
+                lineNumber++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+public class SimpleSearchEngine {
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Usage: java SimpleSearchEngine <searchString>");
+            System.exit(1);
+        }
+        String searchString = args[0];
+        File currentFolder = new File(".");
+        File[] files = currentFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
+        if (files == null) {
+            System.out.println("No text files found in the current folder.");
+            System.exit(1);
+        }
+        for (File file : files) {
+            SearchThread searchThread = new SearchThread(searchString, file);
+            searchThread.start();
+        }
+    }
+}
+//b3
+import java.util.Random;
+class GeneratorThread extends Thread {
+    private Random random = new Random();
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                int randomNumber = random.nextInt(100); 
+                System.out.println("Generated Number: " + randomNumber);
+                if (randomNumber % 2 == 0) {
+                    synchronized (EvenSquareThread.lock) {
+                        EvenSquareThread.number = randomNumber;
+                        EvenSquareThread.lock.notify();
+                    }
+                } else {
+                    synchronized (OddCubeThread.lock) {
+                        OddCubeThread.number = randomNumber;
+                        OddCubeThread.lock.notify(); 
+                    }
+                }
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+class EvenSquareThread extends Thread {
+    public static final Object lock = new Object();
+    public static int number;
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                synchronized (lock) {
+                    lock.wait(); 
+                    int square = number * number;
+                    System.out.println("Even Square: " + square);
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+class OddCubeThread extends Thread {
+    public static final Object lock = new Object();
+    public static int number;
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                synchronized (lock) {
+                    lock.wait();
+                    int cube = number * number * number;
+                    System.out.println("Odd Cube: " + cube);
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+public class MultiThreadApplication {
+    public static void main(String[] args) {
+        GeneratorThread generatorThread = new GeneratorThread();
+        EvenSquareThread evenSquareThread = new EvenSquareThread();
+        OddCubeThread oddCubeThread = new OddCubeThread();
+        generatorThread.start();
+        evenSquareThread.start();
+        oddCubeThread.start();
+    }
+}
+
