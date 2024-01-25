@@ -1,0 +1,16 @@
+import java.util.TreeSet;
+
+public class ColorTreeSetProgram {
+    public static void main(String[] args) {
+        TreeSet<String> colorSet = new TreeSet<>();
+        colorSet.add("Red");
+        colorSet.add("Green");
+        colorSet.add("Blue");
+        colorSet.add("Yellow");
+        colorSet.add("Purple");
+        System.out.println("Colors in the TreeSet:");
+        for (String color : colorSet) {
+            System.out.println(color);
+        }
+    }
+}
