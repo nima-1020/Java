@@ -1,0 +1,17 @@
+import java.util.HashMap;
+import java.util.Map;
+public class ContactListProgram {
+    public static void main(String[] args) {
+        Map<String, String> contactList = new HashMap<>();
+        contactList.put("1234567890", "John Doe");
+        contactList.put("9876543210", "Jane Smith");
+        contactList.put("8765432109", "Alice Johnson");
+        contactList.put("2345678901", "Bob Williams");
+        System.out.println("Contact List:");
+        for (Map.Entry<String, String> entry : contactList.entrySet()) {
+            String mobileNumber = entry.getKey();
+            String studentName = entry.getValue();
+            System.out.println("Mobile Number: " + mobileNumber + ", Student Name: " + studentName);
+        }
+    }
+}
